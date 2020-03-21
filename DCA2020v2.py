@@ -11,8 +11,11 @@ def run_program():
             print("Error. Input not recognized.")
             return
         return realness
-    def filing_status():
-        fsinput = input("Did you file married filing jointly (Y/N)? ")
+    def filing_status(realness):
+        if realness == 1:
+            fsinput = input("Did you file married filing jointly (Y/N)? ")
+        else:
+            fsinput = input("Is this married filing jointly (Y/N)? ")
         if fsinput == "Y":
             filingstatus = "MFJ"
         elif fsinput == "N":
@@ -21,8 +24,11 @@ def run_program():
             print("Error. Input not recognized.")
             return
         return filingstatus
-    def children():
-        children = int(input("How many qualifying children do you have? "))
+    def children(realness):
+        if realness == 1:
+            children = int(input("How many qualifying children do you have? "))
+        else:
+            children = int(input("Qualifying children: "))
         return children
     def agi(realness):
         if realness == 1:
@@ -31,6 +37,7 @@ def run_program():
             agi = int(input("Please enter the adjusted gross income: "))
         return agi
     def net_income_tax_liability(realness,filingstatus,children,agi):
+        #for the purposes of calculating net income tax liability, the bill as written adds back in the child tax credit
         if realness == 1:
             line_eleven = int(input("Please enter the value from line 11: "))
             line_twelve = int(input("Please enter the value from line 12. If blank, enter zero: "))
@@ -38,7 +45,7 @@ def run_program():
             line_thirteen = line_eleven - line_twelve
             line_seventeen = int(input("Please enter the value from line 17. If blank, enter zero: "))
             nitl = line_thirteen - line_seventeen + line_twelve_a
-            print("Your net income tax liability was $",nitl)
+            #print("Your net income tax liability was $",nitl)
             return nitl
         else:
             print("This calculator assumes standard deduction and no credits other than the child tax credit.")
@@ -68,12 +75,7 @@ def run_program():
                     print("Seriously? I'm not making this calculator for rich people.")
             print("Taxable income is calculated at $",taxable)
             child_credit = children*2000
-            #for the purposes of calculating net income tax liability, the bill as written adds back in the child tax credit
-            #if child_credit <= tax:
-                #tax = tax - child_credit
-            #else:
-                #tax = max(tax - child_credit,(0-1400)*children)
-            print("Net tax liability is calculated at $", tax)
+            #print("Net tax liability is calculated at $", tax)
             return tax
     def direct_cash_assistance(filingstatus,children,agi,nitl):
         if filingstatus == "MFJ":
@@ -168,8 +170,8 @@ def run_program():
                 elif reason==1:
                     print("The benefit was reduced by $",reduction," because it was subject to phase in limits based on net income tax liability.")
     realness = realness()
-    filingstatus = filing_status()
-    children = children()
+    filingstatus = filing_status(realness)
+    children = children(realness)
     agi = agi(realness)
     nitl = net_income_tax_liability(realness,filingstatus,children,agi)
     dca = direct_cash_assistance(filingstatus,children,agi,nitl)
